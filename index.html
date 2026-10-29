@@ -1,3 +1,30 @@
+Claude
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Index · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,12 +94,12 @@ h3{font-size:16px;margin:0 0 8px}
 input[type=text],input[type=number],select,textarea{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 10px}
 textarea{resize:vertical;min-height:84px}
 label.f{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:3px}
-
+ 
 /* session bar */
 .sessions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
 .pill{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 14px;font-weight:600;font-size:14px}
 .pill[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
-
+ 
 /* evaluate */
 .eval{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
 .list{padding:12px}
@@ -116,7 +143,7 @@ label.f{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-b
 .d-foot .sp{margin-left:auto}
 .empty{padding:36px 18px;text-align:center;color:var(--muted)}
 .empty h2{color:var(--ink)}
-
+ 
 /* rankings */
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -137,7 +164,7 @@ tr.line td{padding:0;border:0;background:none}
 .stsel.v-selected{border-color:var(--sel);color:var(--sel)}
 .stsel.v-maybe{border-color:var(--maybe);color:var(--maybe)}
 .stsel.v-cut{border-color:var(--cut);color:var(--cut)}
-
+ 
 /* roster */
 .summary{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
 .stat{padding:12px 16px;min-width:120px}
@@ -156,7 +183,7 @@ tr.line td{padding:0;border:0;background:none}
 .col.c-maybe{border-top:4px solid var(--maybe)}
 .col.c-cut{border-top:4px solid var(--cut)}
 .col.c-undecided{border-top:4px solid var(--muted)}
-
+ 
 /* position fit + report */
 .pos{display:inline-block;padding:1px 9px;border-radius:99px;background:var(--accent-soft);font-weight:600;font-size:13px;white-space:nowrap}
 .fit{margin:12px 0 0;font-size:14px}
@@ -170,7 +197,7 @@ tr.line td{padding:0;border:0;background:none}
 .posrow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:-2px 0 16px;font-size:13px;color:var(--muted)}
 .posrow label{display:flex;gap:6px;align-items:center}
 .posrow select{width:auto;padding:4px 6px}
-
+ 
 /* sign-in gate + print */
 .gate{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
 .gate[hidden]{display:none}
@@ -184,7 +211,12 @@ tr.line td{padding:0;border:0;background:none}
   main{padding:0}
   .panel{border:0}
 }
-
+ 
+/* tryout switcher */
+.switch{display:flex;align-items:center;gap:12px;margin-top:6px}
+.switch select{width:auto;max-width:230px;padding:5px 8px;font-weight:600}
+.switch .linkbtn{padding:0}
+ 
 /* setup */
 .setup{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 .card{padding:18px}
@@ -194,13 +226,13 @@ tr.line td{padding:0;border:0;background:none}
 .srow{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px}
 .stack{display:flex;flex-direction:column;gap:10px}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
-
+ 
 dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:18px;width:min(460px,92vw)}
 dialog::backdrop{background:rgba(8,12,22,.55)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:99px;font-weight:600;font-size:14px;z-index:50;opacity:0;pointer-events:none;transition:opacity .15s}
 .toast.show{opacity:1}
 .foot{max-width:1180px;margin:0 auto;padding:4px 16px 28px;color:var(--muted);font-size:13px}
-
+ 
 @media (max-width:900px){
   .cols{grid-template-columns:1fr 1fr}
   .setup{grid-template-columns:1fr}
@@ -229,6 +261,7 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
     <div class="brand">
       <h1 id="teamTitle">Girls Basketball</h1>
       <span id="teamSub">Tryout evaluations</span>
+      <div class="switch"><select id="tryoutSel" data-chg="tryout" aria-label="Switch tryout"></select><button class="linkbtn" data-act="newTryout">+ New tryout</button></div>
     </div>
     <nav class="tabs" role="tablist" aria-label="Sections">
       <button class="tab" role="tab" data-act="tab" data-v="evaluate">Evaluate <span class="n" id="nAth">0</span></button>
@@ -240,7 +273,7 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
     <div class="who" id="who"></div>
   </div>
 </header>
-
+ 
 <main>
   <!-- EVALUATE -->
   <section class="view" id="view-evaluate">
@@ -258,21 +291,21 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
       <section class="panel detail" id="detail"></section>
     </div>
   </section>
-
+ 
   <!-- RANKINGS -->
   <section class="view" id="view-rankings" hidden></section>
-
+ 
   <!-- ROSTER -->
   <section class="view" id="view-roster" hidden></section>
-
+ 
   <!-- REPORT -->
   <section class="view" id="view-report" hidden></section>
-
+ 
   <!-- SETUP -->
   <section class="view" id="view-setup" hidden></section>
 </main>
 <div class="foot" id="syncNote"></div>
-
+ 
 <dialog id="bulkDlg">
   <h3>Paste a list of names</h3>
   <p class="muted small" style="margin-top:0">One athlete per line. Add a jersey number after a comma if you have it, like “Maya Johnson, 14”.</p>
@@ -280,6 +313,20 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
   <div class="btns" style="margin-top:12px;justify-content:flex-end">
     <button class="btn" data-act="bulkCancel">Cancel</button>
     <button class="btn primary" data-act="bulkAdd">Add athletes</button>
+  </div>
+</dialog>
+<dialog id="newDlg">
+  <h3>Start a new tryout</h3>
+  <p class="muted small" style="margin-top:0">Each tryout has its own athletes, ratings, and roster. Coaches switch between them at the top of the page.</p>
+  <div class="row"><div><label class="f" for="newTName">Name</label><input type="text" id="newTName" placeholder="Boys Basketball" autocomplete="off"></div></div>
+  <div class="row" style="grid-template-columns:1fr 1fr">
+    <div><label class="f" for="newTSeason">Season</label><input type="text" id="newTSeason" placeholder="2026–27"></div>
+    <div><label class="f" for="newTSpots">Roster spots</label><input type="number" id="newTSpots" min="1" max="40" value="12"></div>
+  </div>
+  <label class="chk" style="margin:4px 0 14px"><input type="checkbox" id="newTCopy" checked> Copy skills, weights, and position settings from the current tryout</label>
+  <div class="btns" style="justify-content:flex-end">
+    <button class="btn" data-act="newCancel">Cancel</button>
+    <button class="btn primary" data-act="newCreate">Create tryout</button>
   </div>
 </dialog>
 <div class="gate" id="gate" hidden>
@@ -291,32 +338,31 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
+ 
 <script>
 (function(){
 'use strict';
-
+ 
 /* ================================================================
    STEP 1 OF SETUP: paste your Firebase settings below (see SETUP.md).
    Leave the PASTE_ values alone to run in "this browser only" mode.
    ================================================================ */
 var FIREBASE_CONFIG={
-  apiKey: "AIzaSyDxMS_ll6rHJzfEe_dA4OfL_Wx6waprX2o",
-  authDomain: "tryouts-df550.firebaseapp.com",
-  projectId: "tryouts-df550",
-  storageBucket: "tryouts-df550.firebasestorage.app",
-  messagingSenderId: "873193458161",
-  appId: "1:873193458161:web:be6449919cde03d566dc50"
+  apiKey:"PASTE_API_KEY",
+  authDomain:"PASTE_PROJECT_ID.firebaseapp.com",
+  projectId:"PASTE_PROJECT_ID",
+  appId:"PASTE_APP_ID"
 };
 var cloudOn=!!(FIREBASE_CONFIG.apiKey&&FIREBASE_CONFIG.apiKey.indexOf('PASTE')!==0&&typeof firebase!=='undefined');
 var addSeq=0;
 /* ================================================================ */
-var KEY='girls-bball-tryout-tracker-v1';
+var KEY='girls-bball-tryout-tracker-v1', KEY2='tryout-tracker-multi-v2', PREF='tryout-tracker-active';
+var all={}, activeId=null;
 var LABELS=['Needs work','Developing','Solid','Strong','Standout'];
 var STATUS={undecided:'Undecided',selected:'Selected',maybe:'Maybe',cut:'Cut'};
 var ORDER=['selected','maybe','undecided','cut'];
 var uid=function(){return Math.random().toString(36).slice(2,9)};
-
+ 
 var POSDEF={'Ball handling':{G:3,W:1,P:0},'Shooting':{G:2,W:3,P:1},'Defense':{G:2,W:3,P:3},'Rebounding':{G:0,W:2,P:3},'Basketball IQ':{G:3,W:2,P:2},'Speed & athleticism':{G:3,W:3,P:1},'Hustle & effort':{G:1,W:2,P:3},'Coachability & attitude':{G:1,W:1,P:1},'Teamwork':{G:2,W:1,P:1}};
 function posFor(name){var p=POSDEF[name]; return p?{G:p.G,W:p.W,P:p.P}:{G:1,W:1,P:1}}
 function validData(d){return !!(d&&d.team&&d.criteria&&d.criteria.length&&d.sessions&&d.sessions.length&&Array.isArray(d.athletes))}
@@ -324,7 +370,7 @@ function migrate(d){
   d.criteria.forEach(function(c){ if(!c.pos) c.pos=posFor(c.name); });
   return d;
 }
-
+ 
 function defaults(){
   var s1=uid(), s2=uid();
   return {
@@ -334,26 +380,44 @@ function defaults(){
     athletes:[]
   };
 }
-
+ 
 var data=load();
 var ui={tab:'evaluate',selected:null,filter:'all',session:data.sessions[0].id,backup:'',reportN:'spots',reportNotes:false};
-
+ 
 function load(){
-  if(cloudOn) return defaults();
+  if(cloudOn){ activeId=null; return defaults(); }
   try{
-    var raw=localStorage.getItem(KEY);
+    var raw=localStorage.getItem(KEY2);
     if(raw){
-      var d=JSON.parse(raw);
-      if(validData(d)) return migrate(d);
+      var st=JSON.parse(raw);
+      if(st&&st.tryouts){
+        Object.keys(st.tryouts).forEach(function(id){ if(validData(st.tryouts[id])) all[id]=migrate(st.tryouts[id]); });
+        if(all[st.activeId]) activeId=st.activeId;
+      }
+    }
+    if(!Object.keys(all).length){
+      var old=localStorage.getItem(KEY);
+      if(old){ var od=JSON.parse(old); if(validData(od)){ activeId=uid(); od.createdAt=od.createdAt||Date.now(); all[activeId]=migrate(od); } }
     }
   }catch(e){}
-  return defaults();
+  if(!Object.keys(all).length){ activeId=uid(); var d0=defaults(); d0.createdAt=Date.now(); all[activeId]=d0; }
+  if(!all[activeId]) activeId=Object.keys(all)[0];
+  return all[activeId];
+}
+function saveLocal(){
+  if(cloudOn) return;
+  all[activeId]=data;
+  try{localStorage.setItem(KEY2,JSON.stringify({activeId:activeId,tryouts:all}));}catch(e){}
 }
 /* ---------- cloud sync (Firebase) ---------- */
 var fdb=null, auth=null, cu=null, shadow=null, dirty=false, pendingApply=false, idleRender=false, syncTimer=null;
-var remoteCfg=null, remoteAth=[], readyA=false, readyC=false, unsubA=null, unsubC=null;
+var remoteT=[], remoteAth=[], readyT=false, readyA=false, unsubT=null, unsubA=null, athFor=null, creating=false;
 function clone(o){return JSON.parse(JSON.stringify(o))}
 function cfgOf(d){return {team:d.team,criteria:d.criteria,sessions:d.sessions}}
+function tcol(){return fdb.collection('tryouts')}
+function acol(id){return tcol().doc(id).collection('athletes')}
+function getPref(){try{return localStorage.getItem(PREF)}catch(e){return null}}
+function setPref(id){try{localStorage.setItem(PREF,id)}catch(e){}}
 function setSync(st){
   var el=$('syncNote'); if(!el) return;
   var msg={
@@ -380,8 +444,8 @@ function renderAuth(){
   w.innerHTML=(cloudOn&&cu)?'<span class="muted small">'+esc(cu.email||'')+'</span><button class="linkbtn" data-act="signout">Sign out</button>':'';
 }
 function stopListeners(){
-  if(unsubA){unsubA();unsubA=null} if(unsubC){unsubC();unsubC=null}
-  readyA=readyC=false; remoteCfg=null; remoteAth=[];
+  if(unsubT){unsubT();unsubT=null} if(unsubA){unsubA();unsubA=null}
+  readyT=readyA=false; remoteT=[]; remoteAth=[]; athFor=null;
 }
 function onErr(err){
   if(err&&err.code==='permission-denied'){
@@ -391,38 +455,60 @@ function onErr(err){
 }
 function startListeners(){
   stopListeners();
-  unsubC=fdb.collection('tryout').doc('config').onSnapshot(function(sn){
-    remoteCfg=sn.exists?sn.data():null; readyC=true; applyRemote();
+  unsubT=tcol().onSnapshot(function(qs){
+    var arr=[]; qs.forEach(function(d){var x=d.data(); x.id=d.id; arr.push(x)});
+    arr.sort(function(x,y){return (x.createdAt||0)-(y.createdAt||0)});
+    remoteT=arr; readyT=true; applyRemote();
   },onErr);
-  unsubA=fdb.collection('athletes').onSnapshot(function(qs){
+}
+function watchAthletes(id){
+  if(unsubA){unsubA();unsubA=null}
+  readyA=false; remoteAth=[]; athFor=id;
+  unsubA=acol(id).onSnapshot(function(qs){
     var arr=[]; qs.forEach(function(d){var x=d.data(); x.id=d.id; arr.push(x)});
     arr.sort(function(x,y){return (x.createdAt||0)-(y.createdAt||0)||String(x.name).localeCompare(String(y.name))});
     remoteAth=arr; readyA=true; applyRemote();
   },onErr);
 }
+function bootstrap(){
+  // First run on an empty database. Also imports data saved by the earlier single-tryout layout, if any.
+  fdb.collection('tryout').doc('config').get().then(function(c){
+    if(!c.exists) return null;
+    return fdb.collection('athletes').get().then(function(qs){return {cfg:c.data(),docs:qs.docs}});
+  }).catch(function(){return null}).then(function(leg){
+    var id=uid(), now=Date.now(), b=fdb.batch();
+    var cfg=leg?{team:leg.cfg.team,criteria:leg.cfg.criteria,sessions:leg.cfg.sessions}:clone(cfgOf(defaults()));
+    cfg.createdAt=now; cfg.updatedAt=now;
+    b.set(tcol().doc(id),cfg);
+    if(leg) leg.docs.forEach(function(d){ b.set(acol(id).doc(d.id),d.data()) });
+    activeId=id; setPref(id);
+    return b.commit();
+  }).then(function(){ creating=false },function(){
+    creating=false; setSync('error');
+    showGate('loading','Couldn’t set up the database. Check that the Firestore rules were published, then refresh.');
+  });
+}
 function applyRemote(force){
-  if(!(readyA&&readyC)) return;
+  if(!readyT) return;
   if(dirty&&!force){ pendingApply=true; return }
-  var d={
-    team:remoteCfg&&remoteCfg.team?remoteCfg.team:data.team,
-    criteria:remoteCfg&&remoteCfg.criteria?remoteCfg.criteria:data.criteria,
-    sessions:remoteCfg&&remoteCfg.sessions?remoteCfg.sessions:data.sessions,
-    athletes:clone(remoteAth)
-  };
-  data=migrate(d);
+  if(!remoteT.length){ if(!creating){ creating=true; bootstrap() } return }
+  var ids=remoteT.map(function(t){return t.id}), pref=getPref();
+  var want=(activeId&&ids.indexOf(activeId)>-1)?activeId:((pref&&ids.indexOf(pref)>-1)?pref:ids[0]);
+  if(want!==activeId||athFor!==want){ activeId=want; setPref(want); watchAthletes(want); }
+  if(!readyA) return;
+  var t=remoteT.filter(function(x){return x.id===activeId})[0];
+  if(!t||!t.criteria||!t.criteria.length||!t.sessions||!t.sessions.length||!t.team) return;
+  data=migrate({team:t.team,criteria:t.criteria,sessions:t.sessions,athletes:clone(remoteAth)});
   shadow=clone(data);
-  var seed=!remoteCfg;
-  if(seed){ shadow.team={}; shadow.criteria=[]; shadow.sessions=[]; }
   if(!data.sessions.some(function(x){return x.id===ui.session})) ui.session=data.sessions[0].id;
   if(!getA(ui.selected)) ui.selected=data.athletes.length?data.athletes[0].id:null;
-  showGate(null);
-  if(seed){ dirty=true; flush(); }
-  else setSync('cloud');
+  showGate(null); setSync('cloud');
   renderWhenIdle();
 }
 function renderWhenIdle(){
   var ae=document.activeElement;
-  if(ae&&ae.id!=='newName'&&ae.id!=='bulkText'&&(ae.tagName==='TEXTAREA'||(ae.tagName==='INPUT'&&ae.type==='text'))){ idleRender=true; return }
+  var skip={newName:1,bulkText:1,newTName:1,newTSeason:1,newTSpots:1};
+  if(ae&&!skip[ae.id]&&(ae.tagName==='TEXTAREA'||(ae.tagName==='INPUT'&&ae.type==='text'))){ idleRender=true; return }
   renderAll();
 }
 document.addEventListener('focusout',function(){
@@ -430,18 +516,18 @@ document.addEventListener('focusout',function(){
 });
 function flush(){
   syncTimer=null;
-  if(!(fdb&&cu&&shadow)){ dirty=false; return }
-  var F=firebase.firestore.FieldValue, batch=fdb.batch(), n=0;
+  if(!(fdb&&cu&&shadow&&activeId)){ dirty=false; return }
+  var F=firebase.firestore.FieldValue, batch=fdb.batch(), n=0, AC=acol(activeId);
   var cfgNow=JSON.stringify(cfgOf(data)), cfgOld=JSON.stringify(cfgOf(shadow));
   if(cfgNow!==cfgOld){
     var c=clone(cfgOf(data)); c.updatedAt=Date.now();
-    batch.set(fdb.collection('tryout').doc('config'),c); n++;
+    batch.set(tcol().doc(activeId),c,{merge:true}); n++;
   }
   var old={}; shadow.athletes.forEach(function(a){old[a.id]=a});
   var seen={};
   data.athletes.forEach(function(a){
     seen[a.id]=1;
-    var ref=fdb.collection('athletes').doc(a.id), o=old[a.id];
+    var ref=AC.doc(a.id), o=old[a.id];
     if(!o){
       if(!a.createdAt) a.createdAt=Date.now()+(addSeq++);
       batch.set(ref,clone(a)); n++; return;
@@ -464,7 +550,7 @@ function flush(){
     if(any){ batch.update(ref,upd); n++ }
   });
   shadow.athletes.forEach(function(o){
-    if(!seen[o.id]){ batch.delete(fdb.collection('athletes').doc(o.id)); n++ }
+    if(!seen[o.id]){ batch.delete(AC.doc(o.id)); n++ }
   });
   dirty=false;
   if(!n){
@@ -484,8 +570,68 @@ function save(){
     if(fdb&&cu&&shadow){ dirty=true; setSync('saving'); clearTimeout(syncTimer); syncTimer=setTimeout(flush,400); }
     return;
   }
-  try{localStorage.setItem(KEY,JSON.stringify(data));}catch(e){}
+  saveLocal();
 }
+ 
+/* ---------- multiple tryouts ---------- */
+function tryoutList(){
+  if(cloudOn){
+    return remoteT.map(function(t){
+      return {id:t.id,name:(t.id===activeId&&data.team&&data.team.name)||(t.team&&t.team.name)||'Tryout'};
+    });
+  }
+  return Object.keys(all).sort(function(a,b){return (all[a].createdAt||0)-(all[b].createdAt||0)}).map(function(id){
+    return {id:id,name:(id===activeId?data.team.name:all[id].team.name)||'Tryout'};
+  });
+}
+function switchTryout(id){
+  if(!id||id===activeId) return;
+  ui.filter='all'; ui.backup='';
+  if(cloudOn){
+    if(dirty){ clearTimeout(syncTimer); flush(); }
+    showGate('loading','Loading tryout…');
+    activeId=id; setPref(id); shadow=null; watchAthletes(id);
+    return;
+  }
+  saveLocal(); activeId=id; data=all[id];
+  ui.session=data.sessions[0].id; ui.selected=data.athletes.length?data.athletes[0].id:null;
+  saveLocal(); renderAll();
+}
+function createTryout(name,season,spots,copy){
+  var id=uid(), now=Date.now();
+  var base={
+    team:{name:name,season:season,spots:spots},
+    criteria:copy?clone(data.criteria):clone(cfgOf(defaults()).criteria),
+    sessions:[{id:uid(),name:'Day 1'},{id:uid(),name:'Day 2'}],
+    createdAt:now, updatedAt:now
+  };
+  if(!cloudOn){
+    saveLocal(); base.athletes=[]; all[id]=base; switchTryout(id); toast('Created '+name); return;
+  }
+  if(dirty){ clearTimeout(syncTimer); flush(); }
+  tcol().doc(id).set(base).then(function(){ switchTryout(id); toast('Created '+name) },function(){ toast('Couldn’t create the tryout. Check your connection.') });
+}
+function deleteTryout(){
+  var id=activeId, others=tryoutList().filter(function(x){return x.id!==id});
+  if(!others.length){ toast('Keep at least one tryout.'); return }
+  if(!cloudOn){
+    delete all[id]; activeId=others[0].id; data=all[activeId];
+    ui.session=data.sessions[0].id; ui.selected=data.athletes.length?data.athletes[0].id:null;
+    saveLocal(); renderAll(); toast('Tryout deleted'); return;
+  }
+  showGate('loading','Deleting tryout…');
+  if(unsubA){unsubA();unsubA=null}
+  acol(id).get().then(function(qs){
+    var docs=qs.docs, p=Promise.resolve();
+    for(var i=0;i<docs.length;i+=400){
+      (function(chunk){ p=p.then(function(){ var b=fdb.batch(); chunk.forEach(function(d){b.delete(d.ref)}); return b.commit(); }); })(docs.slice(i,i+400));
+    }
+    return p;
+  }).then(function(){ return tcol().doc(id).delete(); }).then(function(){
+    activeId=others[0].id; setPref(activeId); shadow=null; watchAthletes(activeId); toast('Tryout deleted');
+  }).catch(function(){ showGate(null); setSync('error'); toast('Couldn’t delete the tryout. Try again.'); });
+}
+ 
 function cloudInit(){
   if(!cloudOn){ setSync('local'); return }
   try{
@@ -498,12 +644,12 @@ function cloudInit(){
     cu=u; renderAuth();
     if(u){ showGate('loading','Loading the latest tryout data…'); startListeners(); }
     else{
-      stopListeners(); shadow=null; data=defaults(); ui.selected=null; ui.session=data.sessions[0].id; renderAll();
+      stopListeners(); shadow=null; activeId=null; data=defaults(); ui.selected=null; ui.session=data.sessions[0].id; renderAll();
       showGate('signin','Sign in with the Google account your head coach added.');
     }
   });
 }
-
+ 
 /* ---------- helpers ---------- */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function $(id){return document.getElementById(id)}
@@ -532,7 +678,7 @@ function copyText(text,okMsg){
     }else fallback();
   }catch(e){fallback()}
 }
-
+ 
 /* ---------- scoring ---------- */
 function sessionScore(a,sid){
   var r=(a.ratings&&a.ratings[sid])||{}, sum=0, w=0;
@@ -576,19 +722,23 @@ function meta(a){
   if(a.grade) bits.push('Gr. '+a.grade);
   return bits.join(' · ');
 }
-
+ 
 /* ---------- rendering ---------- */
 function renderHeader(){
   $('teamTitle').textContent=data.team.name||'Girls Basketball';
   $('teamSub').textContent=(data.team.season?data.team.season+' · ':'')+'Tryout evaluations';
   $('nAth').textContent=data.athletes.length;
   $('nSel').textContent=data.athletes.filter(function(a){return a.status==='selected'}).length;
+  var tl=tryoutList(); if(!tl.length) tl=[{id:activeId||'',name:data.team.name||'Tryout'}];
+  var tsel=$('tryoutSel');
+  tsel.innerHTML=tl.map(function(t){return '<option value="'+esc(t.id)+'">'+esc(t.name)+'</option>'}).join('');
+  tsel.value=activeId||'';
   document.title=(data.team.name||'Tryout')+' Tryout Tracker';
   var tabs=document.querySelectorAll('.tab');
   for(var i=0;i<tabs.length;i++) tabs[i].setAttribute('aria-selected',tabs[i].dataset.v===ui.tab?'true':'false');
   ['evaluate','rankings','roster','report','setup'].forEach(function(v){ $('view-'+v).hidden=(v!==ui.tab) });
 }
-
+ 
 function renderEval(){
   // sessions
   var sb='<span class="muted small" style="font-weight:600">Tryout session</span>';
@@ -596,7 +746,7 @@ function renderEval(){
     sb+='<button class="pill" data-act="session" data-v="'+s.id+'" aria-pressed="'+(ui.session===s.id)+'">'+esc(s.name)+'</button>';
   });
   $('sessionBar').innerHTML=sb;
-
+ 
   // list
   var html='';
   data.athletes.forEach(function(a){
@@ -609,7 +759,7 @@ function renderEval(){
   $('athList').innerHTML=html;
   renderDetail();
 }
-
+ 
 function renderDetail(){
   var el=$('detail');
   if(!data.athletes.length){
@@ -621,7 +771,7 @@ function renderDetail(){
   var sc=sessionScore(a,ui.session), ov=overall(a), rated=ratedCount(a,ui.session);
   var r=(a.ratings&&a.ratings[ui.session])||{};
   var sname=''; data.sessions.forEach(function(s){if(s.id===ui.session) sname=s.name});
-
+ 
   var h='<div class="d-head"><div class="d-fields">'
     +'<div><label class="f">Name</label><input type="text" data-chg="afield" data-f="name" value="'+esc(a.name)+'"></div>'
     +'<div><label class="f">Number</label><input type="text" data-chg="afield" data-f="number" value="'+esc(a.number||'')+'" placeholder="—"></div>'
@@ -630,13 +780,13 @@ function renderDetail(){
     +'</div><div class="bigscore"><b>'+(sc==null?'—':sc.toFixed(0))+'</b>'
     +'<span class="muted small">'+esc(sname)+' score'+(ov!=null&&data.sessions.length>1?' · overall '+ov.toFixed(1):'')+'</span>'
     +'<div class="bar"><i style="width:'+(sc||0)+'%"></i></div></div></div>';
-
+ 
   h+='<div class="seg" role="group" aria-label="Decision">';
   Object.keys(STATUS).forEach(function(k){
     h+='<button class="s-'+k+'" data-act="setstatus" data-v="'+k+'" aria-pressed="'+((a.status||'undecided')===k)+'">'+STATUS[k]+'</button>';
   });
   h+='</div>';
-
+ 
   var bp=bestPos(a);
   if(bp){
     h+='<p class="fit"><b>Best fit: '+esc(bp.label)+'</b><span class="muted">'+bp.all.map(function(x){return esc(x.name)+' '+x.s.toFixed(0)}).join(' · ')+'</span>'
@@ -644,7 +794,7 @@ function renderDetail(){
   }else{
     h+='<p class="fit muted">Rate at least three skills to see a suggested position.</p>';
   }
-
+ 
   h+='<div style="margin-top:14px">';
   data.criteria.forEach(function(c){
     var cur=r[c.id]||0;
@@ -653,14 +803,14 @@ function renderDetail(){
     h+='</div></div>';
   });
   h+='</div><p class="legend">1 needs work · 3 solid · 5 standout. Tap a selected number again to clear it. '+rated+' of '+data.criteria.length+' rated this session.</p>';
-
+ 
   h+='<div style="margin-top:12px"><label class="f">Coach’s notes</label><textarea data-inp="notes" placeholder="What stood out? Anything to follow up on?">'+esc(a.notes||'')+'</textarea></div>';
-
+ 
   h+='<div class="d-foot"><button class="btn" data-act="prev">Previous</button><button class="btn primary" data-act="next">Next athlete to rate</button>'
     +'<button class="btn danger sp" data-act="delAthlete">Remove athlete</button></div>';
   el.innerHTML=h;
 }
-
+ 
 function renderRankings(){
   var list=ranked(), spots=Number(data.team.spots)||0;
   var el=$('view-rankings');
@@ -692,7 +842,7 @@ function renderRankings(){
   h+='</tbody></table></div>';
   el.innerHTML=h;
 }
-
+ 
 function renderRoster(){
   var el=$('view-roster'), spots=Number(data.team.spots)||0;
   var list=ranked();
@@ -724,23 +874,23 @@ function renderRoster(){
   h+='</div>';
   el.innerHTML=h;
 }
-
+ 
 function renderSetup(){
   var el=$('view-setup');
   var h='<h2>Setup</h2><p class="muted" style="margin:0 0 14px">Tune the scorecard to what your program values most.</p><div class="setup"><div class="stack">';
-
+ 
   h+='<div class="panel card"><h3>Team</h3><div class="row three">'
-    +'<div><label class="f">Team name</label><input type="text" data-chg="tfield" data-f="name" value="'+esc(data.team.name)+'"></div>'
+    +'<div><label class="f">Tryout name</label><input type="text" data-chg="tfield" data-f="name" value="'+esc(data.team.name)+'"></div>'
     +'<div><label class="f">Season</label><input type="text" data-chg="tfield" data-f="season" value="'+esc(data.team.season)+'" placeholder="2026–27"></div>'
     +'<div><label class="f">Roster spots</label><input type="number" min="1" max="40" data-chg="tfield" data-f="spots" value="'+esc(data.team.spots)+'"></div></div></div>';
-
+ 
   h+='<div class="panel card"><h3>Tryout sessions</h3><p class="muted small" style="margin-top:0">Rate players each day. Overall scores average the sessions that have ratings.</p>';
   data.sessions.forEach(function(s){
     h+='<div class="srow"><input type="text" data-chg="sname" data-id="'+s.id+'" value="'+esc(s.name)+'" aria-label="Session name">'
       +'<button class="btn sm danger" data-act="delSession" data-v="'+s.id+'">Remove</button></div>';
   });
   h+='<button class="btn sm" data-act="addSession">Add a session</button></div>';
-
+ 
   h+='<div class="panel card"><h3>Backup &amp; export</h3><div class="btns">'
     +'<button class="btn" data-act="copyCsv">Copy results as CSV</button><button class="btn" data-act="saveCsv">Save CSV file</button>'
     +'<button class="btn" data-act="showBackup">Show backup text</button></div>'
@@ -748,7 +898,7 @@ function renderSetup(){
     +'<label class="f" for="backupBox">Backup text</label><textarea id="backupBox" rows="4" placeholder="Tap “Show backup text” to fill this, or paste a backup here and tap Restore.">'+esc(ui.backup)+'</textarea>'
     +'<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="copyBackup">Copy backup</button><button class="btn sm primary" data-act="restore">Restore from pasted backup</button></div></div>';
   h+='</div><div class="stack">';
-
+ 
   h+='<div class="panel card"><h3>Scorecard skills</h3><p class="muted small" style="margin-top:0">Weight shows how much a skill counts toward the overall score: 1 is a minor factor, 5 is critical. “Matters for” tells the report how much each skill points to a position (0 none, 3 key) so it can suggest a best fit.</p>';
   data.criteria.forEach(function(c){
     h+='<div class="crow"><input type="text" data-chg="cname" data-id="'+c.id+'" value="'+esc(c.name)+'" aria-label="Skill name">'
@@ -764,18 +914,20 @@ function renderSetup(){
     h+='</div>';
   });
   h+='<button class="btn sm" data-act="addCrit">Add a skill</button></div>';
-
+ 
   h+='<div class="panel card"><h3>Start over</h3><div class="btns">'
     +'<button class="btn danger" data-act="clearAthletes">Remove all athletes</button>'
-    +'<button class="btn danger" data-act="resetAll">Reset everything</button></div>'
-    +'<p class="muted small">These can’t be undone. Copy a backup first if you might want the data later.</p></div>';
+    +'<button class="btn danger" data-act="resetAll">Reset skills &amp; sessions</button></div>'
+    +'<p class="muted small">These affect only this tryout and can’t be undone. Copy a backup first if you might want the data later.</p></div>';
+  h+='<div class="panel card"><h3>Delete this tryout</h3><p class="muted small" style="margin-top:0">Permanently removes <b>'+esc(data.team.name||'this tryout')+'</b> with all of its athletes, ratings, and notes. Your other tryouts aren’t touched. Type the tryout’s name to confirm.</p>'
+    +'<div class="srow"><input type="text" id="delName" placeholder="Type the name" autocomplete="off" aria-label="Type the tryout name to confirm"><button class="btn danger" data-act="deleteTryout">Delete tryout</button></div></div>';
   h+='</div></div>';
   el.innerHTML=h;
 }
-
+ 
 function renderAll(){ renderHeader(); renderEval(); renderRankings(); renderRoster(); renderReport(); renderSetup(); }
 function refresh(){ save(); renderAll(); }
-
+ 
 /* ---------- position fit + report ---------- */
 var POS=[['G','Guard'],['W','Wing'],['P','Post']];
 function posFit(a,k){
@@ -814,7 +966,7 @@ var REPORT_CSS='.rp{font-family:var(--body,Arial,sans-serif);color:var(--ink,#11
  +'.rp li{margin-bottom:3px}'
  +'.rp .note{color:var(--muted,#555);font-size:13px}'
  +'@media (max-width:700px){.rp .grid3{grid-template-columns:1fr}}';
-
+ 
 function reportModel(){
   var rk=ranked(), spots=Number(data.team.spots)||12;
   var rated=rk.filter(function(x){return x.s!=null});
@@ -908,7 +1060,7 @@ function saveFile(name,content){
   toast('Saved '+name);
 }
 function stamp(){return new Date().toISOString().slice(0,10)}
-
+ 
 /* ---------- actions ---------- */
 function addAthlete(name,number){
   name=(name||'').trim(); if(!name) return null;
@@ -938,7 +1090,7 @@ function csv(){
   });
   return rows.join('\n');
 }
-
+ 
 document.addEventListener('click',function(e){
   var t=e.target.closest('[data-act]'); if(!t) return;
   var act=t.dataset.act, v=t.dataset.v, a;
@@ -1009,6 +1161,20 @@ document.addEventListener('click',function(e){
       if(data.criteria.length<2){ toast('Keep at least one skill.'); break }
       confirmTap(t,function(){ data.criteria=data.criteria.filter(function(c){return c.id!==v}); refresh(); }); break;
     case 'copyCsv': copyText(csv(),'Results copied. Paste into a spreadsheet.'); break;
+    case 'newTryout':
+      $('newTName').value=''; $('newTSeason').value=data.team.season||''; $('newTSpots').value=data.team.spots||12; $('newTCopy').checked=true;
+      $('newDlg').showModal(); $('newTName').focus(); break;
+    case 'newCancel': $('newDlg').close(); break;
+    case 'newCreate':
+      var tn=$('newTName').value.trim();
+      if(!tn){ toast('Give the tryout a name first.'); $('newTName').focus(); break }
+      var sp=parseInt($('newTSpots').value,10);
+      $('newDlg').close();
+      createTryout(tn,$('newTSeason').value.trim(),(sp>0?Math.min(sp,40):12),$('newTCopy').checked); break;
+    case 'deleteTryout':
+      var typed=(($('delName')||{}).value||'').trim().toLowerCase();
+      if(!typed||typed!==String(data.team.name||'').trim().toLowerCase()){ toast('Type the tryout’s exact name to confirm.'); break }
+      deleteTryout(); break;
     case 'signin':
       if(!auth) break;
       auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(function(err){
@@ -1036,10 +1202,10 @@ document.addEventListener('click',function(e){
     case 'clearAthletes':
       confirmTap(t,function(){ data.athletes=[]; ui.selected=null; refresh(); toast('All athletes removed'); }); break;
     case 'resetAll':
-      confirmTap(t,function(){ data=defaults(); ui.session=data.sessions[0].id; ui.selected=null; ui.backup=''; refresh(); toast('Reset to defaults'); }); break;
+      confirmTap(t,function(){ var keep=data.team, ca=data.createdAt; data=defaults(); data.team=keep; data.createdAt=ca; ui.session=data.sessions[0].id; ui.selected=null; ui.backup=''; refresh(); toast('Skills and sessions reset'); }); break;
   }
 });
-
+ 
 document.addEventListener('change',function(e){
   var t=e.target.closest('[data-chg]'); if(!t) return;
   var k=t.dataset.chg, id=t.dataset.id, a;
@@ -1057,8 +1223,9 @@ document.addEventListener('change',function(e){
   else if(k==='cpos'){ data.criteria.forEach(function(c){ if(c.id===id){ c.pos=c.pos||{G:1,W:1,P:1}; c.pos[t.dataset.k]=Number(t.value) } }); refresh() }
   else if(k==='reportN'){ ui.reportN=t.value; renderReport() }
   else if(k==='reportNotes'){ ui.reportNotes=t.checked; renderReport() }
+  else if(k==='tryout'){ switchTryout(t.value) }
 });
-
+ 
 document.addEventListener('input',function(e){
   var t=e.target;
   if(t.dataset&&t.dataset.inp==='notes'){ var a=getA(ui.selected); if(a){a.notes=t.value; save()} }
@@ -1066,10 +1233,12 @@ document.addEventListener('input',function(e){
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&e.target.id==='newName'){ e.preventDefault(); document.querySelector('[data-act="add"]').click(); }
 });
-
+ 
 var rs=document.createElement('style'); rs.textContent=REPORT_CSS; document.head.appendChild(rs);
 renderAll(); setSync(cloudOn?'connecting':'local'); cloudInit();
 })();
 </script>
 </body>
 </html>
+ 
+Claude finished the response
