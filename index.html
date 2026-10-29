@@ -317,16 +317,17 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
 'use strict';
 
 /* ================================================================
-   STEP 1 OF SETUP: paste your Firebase settings below (see SETUP.md).
-   Leave the PASTE_ values alone to run in "this browser only" mode.
+   Firebase settings for this site (already filled in).
+   These values are public by design; the Firestore rules and Google
+   sign-in are what protect the data.
    ================================================================ */
 var FIREBASE_CONFIG={
-  apiKey: "AIzaSyDxMS_ll6rHJzfEe_dA4OfL_Wx6waprX2o",
-  authDomain: "tryouts-df550.firebaseapp.com",
-  projectId: "tryouts-df550",
-  storageBucket: "tryouts-df550.firebasestorage.app",
-  messagingSenderId: "873193458161",
-  appId: "1:873193458161:web:be6449919cde03d566dc50"
+  apiKey:"AIzaSyDxMS_ll6rHJzfEe_dA4OfL_Wx6waprX2o",
+  authDomain:"tryouts-df550.firebaseapp.com",
+  projectId:"tryouts-df550",
+  storageBucket:"tryouts-df550.firebasestorage.app",
+  messagingSenderId:"873193458161",
+  appId:"1:873193458161:web:be6449919cde03d566dc50"
 };
 var cloudOn=!!(FIREBASE_CONFIG.apiKey&&FIREBASE_CONFIG.apiKey.indexOf('PASTE')!==0&&typeof firebase!=='undefined');
 var addSeq=0;
@@ -339,10 +340,22 @@ var ORDER=['selected','maybe','undecided','cut'];
 var uid=function(){return Math.random().toString(36).slice(2,9)};
 
 var POSDEF={'Ball handling':{G:3,W:1,P:0},'Shooting':{G:2,W:3,P:1},'Defense':{G:2,W:3,P:3},'Rebounding':{G:0,W:2,P:3},'Basketball IQ':{G:3,W:2,P:2},'Speed & athleticism':{G:3,W:3,P:1},'Hustle & effort':{G:1,W:2,P:3},'Coachability & attitude':{G:1,W:1,P:1},'Teamwork':{G:2,W:1,P:1}};
+var P5=[{id:'PG',name:'Point guard'},{id:'SG',name:'Shooting guard'},{id:'SF',name:'Small forward'},{id:'PF',name:'Power forward'},{id:'C',name:'Center'}];
+var POSDEF5={'Ball handling':{PG:3,SG:2,SF:1,PF:0,C:0},'Shooting':{PG:2,SG:3,SF:3,PF:1,C:0},'Defense':{PG:2,SG:2,SF:3,PF:3,C:3},'Rebounding':{PG:0,SG:0,SF:2,PF:3,C:3},'Basketball IQ':{PG:3,SG:2,SF:2,PF:2,C:2},'Speed & athleticism':{PG:3,SG:3,SF:3,PF:2,C:1},'Hustle & effort':{PG:1,SG:1,SF:2,PF:3,C:3},'Coachability & attitude':{PG:1,SG:1,SF:1,PF:1,C:1},'Teamwork':{PG:2,SG:1,SF:1,PF:1,C:1}};
+function defaultPositions(){return [{id:'G',name:'Guard'},{id:'W',name:'Wing'},{id:'P',name:'Post'}]}
+function applyPreset(n){
+  data.positions=n===3?defaultPositions():JSON.parse(JSON.stringify(P5));
+  data.criteria.forEach(function(c){
+    var src=(n===3?POSDEF:POSDEF5)[c.name], o={};
+    data.positions.forEach(function(p){ o[p.id]=(src&&src[p.id]!==undefined)?src[p.id]:1 });
+    c.pos=o;
+  });
+}
 function posFor(name){var p=POSDEF[name]; return p?{G:p.G,W:p.W,P:p.P}:{G:1,W:1,P:1}}
 function validData(d){return !!(d&&d.team&&d.criteria&&d.criteria.length&&d.sessions&&d.sessions.length&&Array.isArray(d.athletes))}
 function migrate(d){
   d.criteria.forEach(function(c){ if(!c.pos) c.pos=posFor(c.name); });
+  if(!d.positions||!d.positions.length) d.positions=defaultPositions();
   return d;
 }
 
@@ -352,6 +365,7 @@ function defaults(){
     team:{name:'Girls Basketball',season:'',spots:12},
     criteria:[['Ball handling',3],['Shooting',3],['Defense',3],['Rebounding',2],['Basketball IQ',3],['Speed & athleticism',2],['Hustle & effort',3],['Coachability & attitude',3],['Teamwork',2]].map(function(x){return {id:uid(),name:x[0],weight:x[1],pos:posFor(x[0])}}),
     sessions:[{id:s1,name:'Day 1'},{id:s2,name:'Day 2'}],
+    positions:defaultPositions(),
     athletes:[]
   };
 }
@@ -388,7 +402,7 @@ function saveLocal(){
 var fdb=null, auth=null, cu=null, shadow=null, dirty=false, pendingApply=false, idleRender=false, syncTimer=null;
 var remoteT=[], remoteAth=[], readyT=false, readyA=false, unsubT=null, unsubA=null, athFor=null, creating=false;
 function clone(o){return JSON.parse(JSON.stringify(o))}
-function cfgOf(d){return {team:d.team,criteria:d.criteria,sessions:d.sessions}}
+function cfgOf(d){return {team:d.team,criteria:d.criteria,sessions:d.sessions,positions:d.positions}}
 function tcol(){return fdb.collection('tryouts')}
 function acol(id){return tcol().doc(id).collection('athletes')}
 function getPref(){try{return localStorage.getItem(PREF)}catch(e){return null}}
@@ -452,7 +466,7 @@ function bootstrap(){
     return fdb.collection('athletes').get().then(function(qs){return {cfg:c.data(),docs:qs.docs}});
   }).catch(function(){return null}).then(function(leg){
     var id=uid(), now=Date.now(), b=fdb.batch();
-    var cfg=leg?{team:leg.cfg.team,criteria:leg.cfg.criteria,sessions:leg.cfg.sessions}:clone(cfgOf(defaults()));
+    var cfg=leg?{team:leg.cfg.team,criteria:leg.cfg.criteria,sessions:leg.cfg.sessions,positions:leg.cfg.positions||defaultPositions()}:clone(cfgOf(defaults()));
     cfg.createdAt=now; cfg.updatedAt=now;
     b.set(tcol().doc(id),cfg);
     if(leg) leg.docs.forEach(function(d){ b.set(acol(id).doc(d.id),d.data()) });
@@ -473,7 +487,7 @@ function applyRemote(force){
   if(!readyA) return;
   var t=remoteT.filter(function(x){return x.id===activeId})[0];
   if(!t||!t.criteria||!t.criteria.length||!t.sessions||!t.sessions.length||!t.team) return;
-  data=migrate({team:t.team,criteria:t.criteria,sessions:t.sessions,athletes:clone(remoteAth)});
+  data=migrate({team:t.team,criteria:t.criteria,sessions:t.sessions,positions:t.positions,athletes:clone(remoteAth)});
   shadow=clone(data);
   if(!data.sessions.some(function(x){return x.id===ui.session})) ui.session=data.sessions[0].id;
   if(!getA(ui.selected)) ui.selected=data.athletes.length?data.athletes[0].id:null;
@@ -577,6 +591,7 @@ function createTryout(name,season,spots,copy){
   var base={
     team:{name:name,season:season,spots:spots},
     criteria:copy?clone(data.criteria):clone(cfgOf(defaults()).criteria),
+    positions:copy?clone(data.positions):defaultPositions(),
     sessions:[{id:uid(),name:'Day 1'},{id:uid(),name:'Day 2'}],
     createdAt:now, updatedAt:now
   };
@@ -874,6 +889,13 @@ function renderSetup(){
     +'<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="copyBackup">Copy backup</button><button class="btn sm primary" data-act="restore">Restore from pasted backup</button></div></div>';
   h+='</div><div class="stack">';
 
+  h+='<div class="panel card"><h3>Positions</h3><p class="muted small" style="margin-top:0">These are the positions the report suggests and ranks players for. Rename them, add more, or remove the ones you don’t use. Under each skill below, “Matters for” sets how strongly that skill points toward each position.</p>';
+  data.positions.forEach(function(p){
+    h+='<div class="srow"><input type="text" data-chg="pname" data-id="'+p.id+'" value="'+esc(p.name)+'" aria-label="Position name"><button class="btn sm danger" data-act="delPos" data-v="'+p.id+'">Remove</button></div>';
+  });
+  h+='<div class="btns"><button class="btn sm" data-act="addPos">Add a position</button><button class="btn sm" data-act="preset3">Use Guard / Wing / Post</button><button class="btn sm" data-act="preset5">Use the five standard positions</button></div>'
+    +'<p class="muted small" style="margin-bottom:0">The two presets reset every skill’s “Matters for” settings to a starting point you can fine-tune.</p></div>';
+
   h+='<div class="panel card"><h3>Scorecard skills</h3><p class="muted small" style="margin-top:0">Weight shows how much a skill counts toward the overall score: 1 is a minor factor, 5 is critical. “Matters for” tells the report how much each skill points to a position (0 none, 3 key) so it can suggest a best fit.</p>';
   data.criteria.forEach(function(c){
     h+='<div class="crow"><input type="text" data-chg="cname" data-id="'+c.id+'" value="'+esc(c.name)+'" aria-label="Skill name">'
@@ -881,7 +903,7 @@ function renderSetup(){
     for(var i=1;i<=5;i++) h+='<option value="'+i+'"'+(c.weight===i?' selected':'')+'>Weight '+i+'</option>';
     h+='</select><button class="btn sm danger" data-act="delCrit" data-v="'+c.id+'">Remove</button></div>';
     h+='<div class="posrow"><span>Matters for</span>';
-    [['G','Guard'],['W','Wing'],['P','Post']].forEach(function(p){
+    POSL().forEach(function(p){
       h+='<label>'+p[1]+'<select data-chg="cpos" data-id="'+c.id+'" data-k="'+p[0]+'" aria-label="'+esc(c.name)+' for '+p[1]+'">';
       ['0 none','1 some','2 good','3 key'].forEach(function(o,i){ h+='<option value="'+i+'"'+(((c.pos&&c.pos[p[0]])||0)===i?' selected':'')+'>'+o+'</option>' });
       h+='</select></label>';
@@ -904,7 +926,7 @@ function renderAll(){ renderHeader(); renderEval(); renderRankings(); renderRost
 function refresh(){ save(); renderAll(); }
 
 /* ---------- position fit + report ---------- */
-var POS=[['G','Guard'],['W','Wing'],['P','Post']];
+function POSL(){return (data.positions||[]).map(function(p){return [p.id,p.name]})}
 function posFit(a,k){
   var sum=0,w=0;
   data.criteria.forEach(function(c){
@@ -917,7 +939,7 @@ function posFit(a,k){
 function bestPos(a){
   var rc=0; data.criteria.forEach(function(c){ if(critAvg(a,c.id)!=null) rc++ });
   if(rc<3) return null;
-  var f=POS.map(function(p){return {name:p[1],s:posFit(a,p[0])}}).filter(function(x){return x.s!=null}).sort(function(x,y){return y.s-x.s});
+  var f=POSL().map(function(p){return {name:p[1],s:posFit(a,p[0])}}).filter(function(x){return x.s!=null}).sort(function(x,y){return y.s-x.s});
   if(!f.length) return null;
   var close=f.filter(function(x){return f[0].s-x.s<=4});
   var label=close.length>=3?'Versatile':close.map(function(x){return x.name}).join(' / ');
@@ -936,7 +958,7 @@ var REPORT_CSS='.rp{font-family:var(--body,Arial,sans-serif);color:var(--ink,#11
  +'.rp th,.rp td{padding:8px;border-bottom:1px solid var(--line,#ddd);text-align:left;vertical-align:top;font-size:14px}'
  +'.rp th{background:var(--soft,#f2f4f7);font-size:12px;position:static;color:var(--muted,#555)}'
  +'.rp .pos{display:inline-block;padding:1px 9px;border-radius:99px;background:var(--accent-soft,#e4e8fb);font-weight:600;font-size:13px;white-space:nowrap}'
- +'.rp .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}'
+ +'.rp .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}'
  +'.rp ol,.rp ul{margin:0;padding-left:20px}'
  +'.rp li{margin-bottom:3px}'
  +'.rp .note{color:var(--muted,#555);font-size:13px}'
@@ -951,15 +973,17 @@ function reportModel(){
     var cs=data.criteria.map(function(c){return {n:c.name,v:critAvg(a,c.id)}}).filter(function(c){return c.v!=null}).sort(function(p,q){return q.v-p.v});
     return {rank:i+1,a:a,s:x.s,bp:bestPos(a),strengths:cs.slice(0,2),growth:cs.length>2&&cs[cs.length-1].v<cs[0].v?cs[cs.length-1]:null};
   });
-  var byPos=POS.map(function(p){
+  var byPos=POSL().map(function(p){
     var list=rated.map(function(x){return {a:x.a,f:posFit(x.a,p[0])}}).filter(function(y){return y.f!=null&&bestPos(y.a)}).sort(function(u,v){return v.f-u.f}).slice(0,5);
     return {name:p[1],list:list};
   });
   var sel=rated.filter(function(x){return x.a.status==='selected'}).concat(rk.filter(function(x){return x.s==null&&x.a.status==='selected'}));
-  var bal={Guard:0,Wing:0,Post:0,Unplaced:0};
-  sel.forEach(function(x){var b=bestPos(x.a); if(b) bal[b.primary]++; else bal.Unplaced++;});
+  var bal={}, unplaced=0;
+  data.positions.forEach(function(p){bal[p.name]=0});
+  sel.forEach(function(x){var b=bestPos(x.a); if(b&&bal[b.primary]!==undefined) bal[b.primary]++; else unplaced++;});
+  var balList=data.positions.map(function(p){return {name:p.name,n:bal[p.name]}});
   var d=new Date();
-  return {rows:rows,byPos:byPos,sel:sel,bal:bal,spots:spots,rated:rated.length,total:rk.length,
+  return {rows:rows,byPos:byPos,sel:sel,bal:balList,unplaced:unplaced,spots:spots,rated:rated.length,total:rk.length,
     when:d.toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'})+' at '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'})};
 }
 function reportHTML(){
@@ -988,7 +1012,7 @@ function reportHTML(){
   });
   h+='</div><p class="note">Position scores weigh the skills that matter most for each spot, so one athlete can appear in more than one list.</p>';
   if(m.sel.length){
-    h+='<h2>Roster so far</h2><p>'+m.sel.length+' of '+m.spots+' spots filled · Guard '+m.bal.Guard+' · Wing '+m.bal.Wing+' · Post '+m.bal.Post+(m.bal.Unplaced?' · Unplaced '+m.bal.Unplaced:'')+'</p><ul>';
+    h+='<h2>Roster so far</h2><p>'+m.sel.length+' of '+m.spots+' spots filled'+m.bal.map(function(b){return ' · '+esc(b.name)+' '+b.n}).join('')+(m.unplaced?' · Unplaced '+m.unplaced:'')+'</p><ul>';
     m.sel.forEach(function(x){var b=bestPos(x.a); h+='<li>'+esc(x.a.name)+(b?' <span class="note">'+esc(b.label)+'</span>':'')+'</li>'});
     h+='</ul>';
   }
@@ -1011,7 +1035,7 @@ function reportText(){
   m.byPos.forEach(function(p){ L.push(p.name+': '+(p.list.map(function(y){return y.a.name+' ('+y.f.toFixed(0)+')'}).join(', ')||'not enough ratings yet')); });
   if(m.sel.length){
     L.push(''); L.push('ROSTER SO FAR ('+m.sel.length+' of '+m.spots+')');
-    L.push('Guard '+m.bal.Guard+' | Wing '+m.bal.Wing+' | Post '+m.bal.Post+(m.bal.Unplaced?' | Unplaced '+m.bal.Unplaced:''));
+    L.push(m.bal.map(function(b){return b.name+' '+b.n}).join(' | ')+(m.unplaced?' | Unplaced '+m.unplaced:''));
     m.sel.forEach(function(x){var b=bestPos(x.a); L.push('- '+x.a.name+(b?' ('+b.label+')':''))});
   }
   return L.join('\n');
@@ -1131,7 +1155,7 @@ document.addEventListener('click',function(e){
         data.athletes.forEach(function(x){ if(x.ratings) delete x.ratings[v] });
         if(ui.session===v) ui.session=data.sessions[0].id; refresh();
       }); break;
-    case 'addCrit': data.criteria.push({id:uid(),name:'New skill',weight:3,pos:{G:1,W:1,P:1}}); refresh(); break;
+    case 'addCrit': var npos={}; data.positions.forEach(function(p){npos[p.id]=1}); data.criteria.push({id:uid(),name:'New skill',weight:3,pos:npos}); refresh(); break;
     case 'delCrit':
       if(data.criteria.length<2){ toast('Keep at least one skill.'); break }
       confirmTap(t,function(){ data.criteria=data.criteria.filter(function(c){return c.id!==v}); refresh(); }); break;
@@ -1159,6 +1183,17 @@ document.addEventListener('click',function(e){
       break;
     case 'signout': if(auth) auth.signOut(); break;
     case 'printReport': window.print(); break;
+    case 'addPos':
+      var np={id:uid(),name:'New position'}; data.positions.push(np);
+      data.criteria.forEach(function(c){ c.pos=c.pos||{}; c.pos[np.id]=1 }); refresh(); break;
+    case 'delPos':
+      if(data.positions.length<2){ toast('Keep at least one position.'); break }
+      confirmTap(t,function(){
+        data.positions=data.positions.filter(function(p){return p.id!==v});
+        data.criteria.forEach(function(c){ if(c.pos) delete c.pos[v] }); refresh();
+      }); break;
+    case 'preset3': case 'preset5':
+      confirmTap(t,function(){ applyPreset(act==='preset3'?3:5); refresh(); toast('Positions updated'); }); break;
     case 'applypos': a=getA(ui.selected); if(a){a.position=v; refresh(); toast('Position set to '+v)} break;
     case 'copyReport': copyText(reportText(),'Report copied'); break;
     case 'saveReport':
@@ -1195,7 +1230,8 @@ document.addEventListener('change',function(e){
   else if(k==='sname'){ data.sessions.forEach(function(s){ if(s.id===id) s.name=t.value.trim()||'Session' }); refresh() }
   else if(k==='cname'){ data.criteria.forEach(function(c){ if(c.id===id) c.name=t.value.trim()||'Skill' }); refresh() }
   else if(k==='cweight'){ data.criteria.forEach(function(c){ if(c.id===id) c.weight=Number(t.value) }); refresh() }
-  else if(k==='cpos'){ data.criteria.forEach(function(c){ if(c.id===id){ c.pos=c.pos||{G:1,W:1,P:1}; c.pos[t.dataset.k]=Number(t.value) } }); refresh() }
+  else if(k==='cpos'){ data.criteria.forEach(function(c){ if(c.id===id){ c.pos=c.pos||{}; c.pos[t.dataset.k]=Number(t.value) } }); refresh() }
+  else if(k==='pname'){ data.positions.forEach(function(p){ if(p.id===id) p.name=t.value.trim()||'Position' }); refresh() }
   else if(k==='reportN'){ ui.reportN=t.value; renderReport() }
   else if(k==='reportNotes'){ ui.reportNotes=t.checked; renderReport() }
   else if(k==='tryout'){ switchTryout(t.value) }
