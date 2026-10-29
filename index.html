@@ -1,30 +1,3 @@
-Claude
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Index · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,12 +67,12 @@ h3{font-size:16px;margin:0 0 8px}
 input[type=text],input[type=number],select,textarea{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:9px 10px}
 textarea{resize:vertical;min-height:84px}
 label.f{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:3px}
- 
+
 /* session bar */
 .sessions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:14px}
 .pill{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 14px;font-weight:600;font-size:14px}
 .pill[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
- 
+
 /* evaluate */
 .eval{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
 .list{padding:12px}
@@ -143,7 +116,7 @@ label.f{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-b
 .d-foot .sp{margin-left:auto}
 .empty{padding:36px 18px;text-align:center;color:var(--muted)}
 .empty h2{color:var(--ink)}
- 
+
 /* rankings */
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -164,7 +137,7 @@ tr.line td{padding:0;border:0;background:none}
 .stsel.v-selected{border-color:var(--sel);color:var(--sel)}
 .stsel.v-maybe{border-color:var(--maybe);color:var(--maybe)}
 .stsel.v-cut{border-color:var(--cut);color:var(--cut)}
- 
+
 /* roster */
 .summary{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0}
 .stat{padding:12px 16px;min-width:120px}
@@ -183,7 +156,7 @@ tr.line td{padding:0;border:0;background:none}
 .col.c-maybe{border-top:4px solid var(--maybe)}
 .col.c-cut{border-top:4px solid var(--cut)}
 .col.c-undecided{border-top:4px solid var(--muted)}
- 
+
 /* position fit + report */
 .pos{display:inline-block;padding:1px 9px;border-radius:99px;background:var(--accent-soft);font-weight:600;font-size:13px;white-space:nowrap}
 .fit{margin:12px 0 0;font-size:14px}
@@ -197,7 +170,7 @@ tr.line td{padding:0;border:0;background:none}
 .posrow{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:-2px 0 16px;font-size:13px;color:var(--muted)}
 .posrow label{display:flex;gap:6px;align-items:center}
 .posrow select{width:auto;padding:4px 6px}
- 
+
 /* sign-in gate + print */
 .gate{position:fixed;inset:0;z-index:40;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px}
 .gate[hidden]{display:none}
@@ -211,12 +184,12 @@ tr.line td{padding:0;border:0;background:none}
   main{padding:0}
   .panel{border:0}
 }
- 
+
 /* tryout switcher */
 .switch{display:flex;align-items:center;gap:12px;margin-top:6px}
 .switch select{width:auto;max-width:230px;padding:5px 8px;font-weight:600}
 .switch .linkbtn{padding:0}
- 
+
 /* setup */
 .setup{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 .card{padding:18px}
@@ -226,13 +199,13 @@ tr.line td{padding:0;border:0;background:none}
 .srow{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px}
 .stack{display:flex;flex-direction:column;gap:10px}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
- 
+
 dialog{border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:18px;width:min(460px,92vw)}
 dialog::backdrop{background:rgba(8,12,22,.55)}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:99px;font-weight:600;font-size:14px;z-index:50;opacity:0;pointer-events:none;transition:opacity .15s}
 .toast.show{opacity:1}
 .foot{max-width:1180px;margin:0 auto;padding:4px 16px 28px;color:var(--muted);font-size:13px}
- 
+
 @media (max-width:900px){
   .cols{grid-template-columns:1fr 1fr}
   .setup{grid-template-columns:1fr}
@@ -273,7 +246,7 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
     <div class="who" id="who"></div>
   </div>
 </header>
- 
+
 <main>
   <!-- EVALUATE -->
   <section class="view" id="view-evaluate">
@@ -291,21 +264,21 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
       <section class="panel detail" id="detail"></section>
     </div>
   </section>
- 
+
   <!-- RANKINGS -->
   <section class="view" id="view-rankings" hidden></section>
- 
+
   <!-- ROSTER -->
   <section class="view" id="view-roster" hidden></section>
- 
+
   <!-- REPORT -->
   <section class="view" id="view-report" hidden></section>
- 
+
   <!-- SETUP -->
   <section class="view" id="view-setup" hidden></section>
 </main>
 <div class="foot" id="syncNote"></div>
- 
+
 <dialog id="bulkDlg">
   <h3>Paste a list of names</h3>
   <p class="muted small" style="margin-top:0">One athlete per line. Add a jersey number after a comma if you have it, like “Maya Johnson, 14”.</p>
@@ -338,11 +311,11 @@ dialog::backdrop{background:rgba(8,12,22,.55)}
   </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
- 
+
 <script>
 (function(){
 'use strict';
- 
+
 /* ================================================================
    STEP 1 OF SETUP: paste your Firebase settings below (see SETUP.md).
    Leave the PASTE_ values alone to run in "this browser only" mode.
@@ -362,7 +335,7 @@ var LABELS=['Needs work','Developing','Solid','Strong','Standout'];
 var STATUS={undecided:'Undecided',selected:'Selected',maybe:'Maybe',cut:'Cut'};
 var ORDER=['selected','maybe','undecided','cut'];
 var uid=function(){return Math.random().toString(36).slice(2,9)};
- 
+
 var POSDEF={'Ball handling':{G:3,W:1,P:0},'Shooting':{G:2,W:3,P:1},'Defense':{G:2,W:3,P:3},'Rebounding':{G:0,W:2,P:3},'Basketball IQ':{G:3,W:2,P:2},'Speed & athleticism':{G:3,W:3,P:1},'Hustle & effort':{G:1,W:2,P:3},'Coachability & attitude':{G:1,W:1,P:1},'Teamwork':{G:2,W:1,P:1}};
 function posFor(name){var p=POSDEF[name]; return p?{G:p.G,W:p.W,P:p.P}:{G:1,W:1,P:1}}
 function validData(d){return !!(d&&d.team&&d.criteria&&d.criteria.length&&d.sessions&&d.sessions.length&&Array.isArray(d.athletes))}
@@ -370,7 +343,7 @@ function migrate(d){
   d.criteria.forEach(function(c){ if(!c.pos) c.pos=posFor(c.name); });
   return d;
 }
- 
+
 function defaults(){
   var s1=uid(), s2=uid();
   return {
@@ -380,10 +353,10 @@ function defaults(){
     athletes:[]
   };
 }
- 
+
 var data=load();
 var ui={tab:'evaluate',selected:null,filter:'all',session:data.sessions[0].id,backup:'',reportN:'spots',reportNotes:false};
- 
+
 function load(){
   if(cloudOn){ activeId=null; return defaults(); }
   try{
@@ -572,7 +545,7 @@ function save(){
   }
   saveLocal();
 }
- 
+
 /* ---------- multiple tryouts ---------- */
 function tryoutList(){
   if(cloudOn){
@@ -631,7 +604,7 @@ function deleteTryout(){
     activeId=others[0].id; setPref(activeId); shadow=null; watchAthletes(activeId); toast('Tryout deleted');
   }).catch(function(){ showGate(null); setSync('error'); toast('Couldn’t delete the tryout. Try again.'); });
 }
- 
+
 function cloudInit(){
   if(!cloudOn){ setSync('local'); return }
   try{
@@ -649,7 +622,7 @@ function cloudInit(){
     }
   });
 }
- 
+
 /* ---------- helpers ---------- */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function $(id){return document.getElementById(id)}
@@ -678,7 +651,7 @@ function copyText(text,okMsg){
     }else fallback();
   }catch(e){fallback()}
 }
- 
+
 /* ---------- scoring ---------- */
 function sessionScore(a,sid){
   var r=(a.ratings&&a.ratings[sid])||{}, sum=0, w=0;
@@ -722,7 +695,7 @@ function meta(a){
   if(a.grade) bits.push('Gr. '+a.grade);
   return bits.join(' · ');
 }
- 
+
 /* ---------- rendering ---------- */
 function renderHeader(){
   $('teamTitle').textContent=data.team.name||'Girls Basketball';
@@ -738,7 +711,7 @@ function renderHeader(){
   for(var i=0;i<tabs.length;i++) tabs[i].setAttribute('aria-selected',tabs[i].dataset.v===ui.tab?'true':'false');
   ['evaluate','rankings','roster','report','setup'].forEach(function(v){ $('view-'+v).hidden=(v!==ui.tab) });
 }
- 
+
 function renderEval(){
   // sessions
   var sb='<span class="muted small" style="font-weight:600">Tryout session</span>';
@@ -746,7 +719,7 @@ function renderEval(){
     sb+='<button class="pill" data-act="session" data-v="'+s.id+'" aria-pressed="'+(ui.session===s.id)+'">'+esc(s.name)+'</button>';
   });
   $('sessionBar').innerHTML=sb;
- 
+
   // list
   var html='';
   data.athletes.forEach(function(a){
@@ -759,7 +732,7 @@ function renderEval(){
   $('athList').innerHTML=html;
   renderDetail();
 }
- 
+
 function renderDetail(){
   var el=$('detail');
   if(!data.athletes.length){
@@ -771,7 +744,7 @@ function renderDetail(){
   var sc=sessionScore(a,ui.session), ov=overall(a), rated=ratedCount(a,ui.session);
   var r=(a.ratings&&a.ratings[ui.session])||{};
   var sname=''; data.sessions.forEach(function(s){if(s.id===ui.session) sname=s.name});
- 
+
   var h='<div class="d-head"><div class="d-fields">'
     +'<div><label class="f">Name</label><input type="text" data-chg="afield" data-f="name" value="'+esc(a.name)+'"></div>'
     +'<div><label class="f">Number</label><input type="text" data-chg="afield" data-f="number" value="'+esc(a.number||'')+'" placeholder="—"></div>'
@@ -780,13 +753,13 @@ function renderDetail(){
     +'</div><div class="bigscore"><b>'+(sc==null?'—':sc.toFixed(0))+'</b>'
     +'<span class="muted small">'+esc(sname)+' score'+(ov!=null&&data.sessions.length>1?' · overall '+ov.toFixed(1):'')+'</span>'
     +'<div class="bar"><i style="width:'+(sc||0)+'%"></i></div></div></div>';
- 
+
   h+='<div class="seg" role="group" aria-label="Decision">';
   Object.keys(STATUS).forEach(function(k){
     h+='<button class="s-'+k+'" data-act="setstatus" data-v="'+k+'" aria-pressed="'+((a.status||'undecided')===k)+'">'+STATUS[k]+'</button>';
   });
   h+='</div>';
- 
+
   var bp=bestPos(a);
   if(bp){
     h+='<p class="fit"><b>Best fit: '+esc(bp.label)+'</b><span class="muted">'+bp.all.map(function(x){return esc(x.name)+' '+x.s.toFixed(0)}).join(' · ')+'</span>'
@@ -794,7 +767,7 @@ function renderDetail(){
   }else{
     h+='<p class="fit muted">Rate at least three skills to see a suggested position.</p>';
   }
- 
+
   h+='<div style="margin-top:14px">';
   data.criteria.forEach(function(c){
     var cur=r[c.id]||0;
@@ -803,14 +776,14 @@ function renderDetail(){
     h+='</div></div>';
   });
   h+='</div><p class="legend">1 needs work · 3 solid · 5 standout. Tap a selected number again to clear it. '+rated+' of '+data.criteria.length+' rated this session.</p>';
- 
+
   h+='<div style="margin-top:12px"><label class="f">Coach’s notes</label><textarea data-inp="notes" placeholder="What stood out? Anything to follow up on?">'+esc(a.notes||'')+'</textarea></div>';
- 
+
   h+='<div class="d-foot"><button class="btn" data-act="prev">Previous</button><button class="btn primary" data-act="next">Next athlete to rate</button>'
     +'<button class="btn danger sp" data-act="delAthlete">Remove athlete</button></div>';
   el.innerHTML=h;
 }
- 
+
 function renderRankings(){
   var list=ranked(), spots=Number(data.team.spots)||0;
   var el=$('view-rankings');
@@ -842,7 +815,7 @@ function renderRankings(){
   h+='</tbody></table></div>';
   el.innerHTML=h;
 }
- 
+
 function renderRoster(){
   var el=$('view-roster'), spots=Number(data.team.spots)||0;
   var list=ranked();
@@ -874,23 +847,23 @@ function renderRoster(){
   h+='</div>';
   el.innerHTML=h;
 }
- 
+
 function renderSetup(){
   var el=$('view-setup');
   var h='<h2>Setup</h2><p class="muted" style="margin:0 0 14px">Tune the scorecard to what your program values most.</p><div class="setup"><div class="stack">';
- 
+
   h+='<div class="panel card"><h3>Team</h3><div class="row three">'
     +'<div><label class="f">Tryout name</label><input type="text" data-chg="tfield" data-f="name" value="'+esc(data.team.name)+'"></div>'
     +'<div><label class="f">Season</label><input type="text" data-chg="tfield" data-f="season" value="'+esc(data.team.season)+'" placeholder="2026–27"></div>'
     +'<div><label class="f">Roster spots</label><input type="number" min="1" max="40" data-chg="tfield" data-f="spots" value="'+esc(data.team.spots)+'"></div></div></div>';
- 
+
   h+='<div class="panel card"><h3>Tryout sessions</h3><p class="muted small" style="margin-top:0">Rate players each day. Overall scores average the sessions that have ratings.</p>';
   data.sessions.forEach(function(s){
     h+='<div class="srow"><input type="text" data-chg="sname" data-id="'+s.id+'" value="'+esc(s.name)+'" aria-label="Session name">'
       +'<button class="btn sm danger" data-act="delSession" data-v="'+s.id+'">Remove</button></div>';
   });
   h+='<button class="btn sm" data-act="addSession">Add a session</button></div>';
- 
+
   h+='<div class="panel card"><h3>Backup &amp; export</h3><div class="btns">'
     +'<button class="btn" data-act="copyCsv">Copy results as CSV</button><button class="btn" data-act="saveCsv">Save CSV file</button>'
     +'<button class="btn" data-act="showBackup">Show backup text</button></div>'
@@ -898,7 +871,7 @@ function renderSetup(){
     +'<label class="f" for="backupBox">Backup text</label><textarea id="backupBox" rows="4" placeholder="Tap “Show backup text” to fill this, or paste a backup here and tap Restore.">'+esc(ui.backup)+'</textarea>'
     +'<div class="btns" style="margin-top:8px"><button class="btn sm" data-act="copyBackup">Copy backup</button><button class="btn sm primary" data-act="restore">Restore from pasted backup</button></div></div>';
   h+='</div><div class="stack">';
- 
+
   h+='<div class="panel card"><h3>Scorecard skills</h3><p class="muted small" style="margin-top:0">Weight shows how much a skill counts toward the overall score: 1 is a minor factor, 5 is critical. “Matters for” tells the report how much each skill points to a position (0 none, 3 key) so it can suggest a best fit.</p>';
   data.criteria.forEach(function(c){
     h+='<div class="crow"><input type="text" data-chg="cname" data-id="'+c.id+'" value="'+esc(c.name)+'" aria-label="Skill name">'
@@ -914,7 +887,7 @@ function renderSetup(){
     h+='</div>';
   });
   h+='<button class="btn sm" data-act="addCrit">Add a skill</button></div>';
- 
+
   h+='<div class="panel card"><h3>Start over</h3><div class="btns">'
     +'<button class="btn danger" data-act="clearAthletes">Remove all athletes</button>'
     +'<button class="btn danger" data-act="resetAll">Reset skills &amp; sessions</button></div>'
@@ -924,10 +897,10 @@ function renderSetup(){
   h+='</div></div>';
   el.innerHTML=h;
 }
- 
+
 function renderAll(){ renderHeader(); renderEval(); renderRankings(); renderRoster(); renderReport(); renderSetup(); }
 function refresh(){ save(); renderAll(); }
- 
+
 /* ---------- position fit + report ---------- */
 var POS=[['G','Guard'],['W','Wing'],['P','Post']];
 function posFit(a,k){
@@ -966,7 +939,7 @@ var REPORT_CSS='.rp{font-family:var(--body,Arial,sans-serif);color:var(--ink,#11
  +'.rp li{margin-bottom:3px}'
  +'.rp .note{color:var(--muted,#555);font-size:13px}'
  +'@media (max-width:700px){.rp .grid3{grid-template-columns:1fr}}';
- 
+
 function reportModel(){
   var rk=ranked(), spots=Number(data.team.spots)||12;
   var rated=rk.filter(function(x){return x.s!=null});
@@ -1060,7 +1033,7 @@ function saveFile(name,content){
   toast('Saved '+name);
 }
 function stamp(){return new Date().toISOString().slice(0,10)}
- 
+
 /* ---------- actions ---------- */
 function addAthlete(name,number){
   name=(name||'').trim(); if(!name) return null;
@@ -1090,7 +1063,7 @@ function csv(){
   });
   return rows.join('\n');
 }
- 
+
 document.addEventListener('click',function(e){
   var t=e.target.closest('[data-act]'); if(!t) return;
   var act=t.dataset.act, v=t.dataset.v, a;
@@ -1205,7 +1178,7 @@ document.addEventListener('click',function(e){
       confirmTap(t,function(){ var keep=data.team, ca=data.createdAt; data=defaults(); data.team=keep; data.createdAt=ca; ui.session=data.sessions[0].id; ui.selected=null; ui.backup=''; refresh(); toast('Skills and sessions reset'); }); break;
   }
 });
- 
+
 document.addEventListener('change',function(e){
   var t=e.target.closest('[data-chg]'); if(!t) return;
   var k=t.dataset.chg, id=t.dataset.id, a;
@@ -1225,7 +1198,7 @@ document.addEventListener('change',function(e){
   else if(k==='reportNotes'){ ui.reportNotes=t.checked; renderReport() }
   else if(k==='tryout'){ switchTryout(t.value) }
 });
- 
+
 document.addEventListener('input',function(e){
   var t=e.target;
   if(t.dataset&&t.dataset.inp==='notes'){ var a=getA(ui.selected); if(a){a.notes=t.value; save()} }
@@ -1233,12 +1206,10 @@ document.addEventListener('input',function(e){
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&e.target.id==='newName'){ e.preventDefault(); document.querySelector('[data-act="add"]').click(); }
 });
- 
+
 var rs=document.createElement('style'); rs.textContent=REPORT_CSS; document.head.appendChild(rs);
 renderAll(); setSync(cloudOn?'connecting':'local'); cloudInit();
 })();
 </script>
 </body>
 </html>
- 
-Claude finished the response
